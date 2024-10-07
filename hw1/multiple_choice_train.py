@@ -440,8 +440,7 @@ def main():
 
     # Log a few random samples from the training set:
     for index in random.sample(range(len(train_dataset)), 3):
-        logger.info(f"Sample {index} of the training set: {
-                    train_dataset[index]}.")
+        logger.info(f"Sample {index} of the training set: {train_dataset[index]}.")
 
     # DataLoaders creation:
     if args.pad_to_max_length:
@@ -542,12 +541,9 @@ def main():
     logger.info("***** Running training *****")
     logger.info(f"  Num examples = {len(train_dataset)}")
     logger.info(f"  Num Epochs = {args.num_train_epochs}")
-    logger.info(f"  Instantaneous batch size per device = {
-                args.per_device_train_batch_size}")
-    logger.info(f"  Total train batch size (w. parallel, distributed & accumulation) = {
-                total_batch_size}")
-    logger.info(f"  Gradient Accumulation steps = {
-                args.gradient_accumulation_steps}")
+    logger.info(f"  Instantaneous batch size per device = {args.per_device_train_batch_size}")
+    logger.info(f"  Total train batch size (w. parallel, distributed & accumulation) = {total_batch_size}")
+    logger.info(f"  Gradient Accumulation steps = {args.gradient_accumulation_steps}")
     logger.info(f"  Total optimization steps = {args.max_train_steps}")
     # Only show the progress bar once on each machine.
     progress_bar = tqdm(range(args.max_train_steps),
