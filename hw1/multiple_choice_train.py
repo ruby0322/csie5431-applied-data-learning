@@ -408,7 +408,7 @@ def main():
         first_sentences = [[context] * 4 for context in examples[context_name]]
         # question_headers = examples[question_header_name]
         second_sentences = [
-            [examples[end][i] for end in ending_names] for i in range(examples.shape[0])
+            [examples[end][i] for end in ending_names] for i, _ in enumerate(examples[context_name])
         ]
         labels = examples[label_column_name]
 
