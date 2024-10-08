@@ -46,31 +46,47 @@ def parse_args():
     return parser.parse_args()
 
 def preprocess_function(examples, tokenizer, max_seq_length):
+    # Clean questions by stripping leading whitespace
     questions = [q.lstrip() for q in examples["question"]]
+
+    # Tokenize questions and contexts with possible overflow handling
     tokenized_examples = tokenizer(
         questions,
         examples["context"],
         truncation="only_second" if tokenizer.padding_side == "right" else "only_first",
         max_length=max_seq_length,
-        padding="max_length",
+        padding="max_length",  # Ensures all sequences are padded to the same length
         stride=128,
         return_overflowing_tokens=True,
         return_offsets_mapping=True,
     )
+
+    # Map the overflowed tokens back to their original examples
     sample_mapping = tokenized_examples.pop("overflow_to_sample_mapping")
     tokenized_examples["example_id"] = []
+
+    # Adjust the offset mapping and associate the tokenized examples with their original IDs
     for i in range(len(tokenized_examples["input_ids"])):
         sequence_ids = tokenized_examples.sequence_ids(i)
         context_index = 1 if tokenizer.padding_side == "right" else 0
 
-        sample_index = sample_mapping[i]
+        sample_index = sample_mapping[i]  # Find the original example this token belongs to
         tokenized_examples["example_id"].append(examples["id"][sample_index])
 
+        # Adjust offset mapping, keeping context positions and discarding others
         tokenized_examples["offset_mapping"][i] = [
             (o if sequence_ids[k] == context_index else None)
             for k, o in enumerate(tokenized_examples["offset_mapping"][i])
         ]
+
+    # Ensure consistent lengths for each batch of tokenized data
+    max_length = max_seq_length
+    for key in ["input_ids", "attention_mask", "token_type_ids"]:
+        if key in tokenized_examples:
+            tokenized_examples[key] = [seq[:max_length] for seq in tokenized_examples[key]]
+
     return tokenized_examples
+
 
 def load_model_and_tokenizer(model_dir):
     model = AutoModelForQuestionAnswering.from_pretrained(model_dir)
