@@ -3,6 +3,7 @@ import json
 import os
 from itertools import chain
 
+import numpy as np
 import torch
 from accelerate import Accelerator
 from datasets import load_dataset
