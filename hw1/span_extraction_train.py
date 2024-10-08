@@ -703,7 +703,7 @@ def main():
         else:
             formatted_predictions = [{"id": k, "prediction_text": v} for k, v in predictions.items()]
 
-        references = [{"id": ex["id"], "answers": [{ "text": ex[answer_column_name]['text'], "answer_start": ex[answer_column_name]['answer_start']}]} for ex in examples]
+        references = [{"id": ex["id"], "answers": [{ "text": ex[answer_column_name]['text'][0], "answer_start": ex[answer_column_name]['answer_start'][0]}]} for ex in examples]
         return EvalPrediction(predictions=formatted_predictions, label_ids=references)
 
     metric = evaluate.load("squad_v2" if args.version_2_with_negative else "squad")
