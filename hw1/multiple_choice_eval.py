@@ -1,5 +1,6 @@
 import argparse
 import json
+from itertools import chain
 
 import evaluate
 import torch
