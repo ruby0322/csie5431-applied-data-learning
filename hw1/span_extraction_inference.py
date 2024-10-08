@@ -79,12 +79,6 @@ def preprocess_function(examples, tokenizer, max_seq_length):
             for k, o in enumerate(tokenized_examples["offset_mapping"][i])
         ]
 
-    # Ensure consistent lengths for each batch of tokenized data
-    max_length = max_seq_length
-    for key in ["input_ids", "attention_mask", "token_type_ids"]:
-        if key in tokenized_examples:
-            tokenized_examples[key] = [seq[:max_length] for seq in tokenized_examples[key]]
-
     return tokenized_examples
 
 
