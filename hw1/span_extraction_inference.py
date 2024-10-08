@@ -45,6 +45,12 @@ def parse_args():
         default=8,
         help="Batch size for evaluation."
     )
+    parser.add_argument(
+        "--output_dir",
+        type=str,
+        default='./output',
+        help="Output directory"
+    )
     return parser.parse_args()
 
 def preprocess_function(examples, tokenizer, max_seq_length):
@@ -242,8 +248,6 @@ def main():
             all_start_logits.append(start_logits)
             all_end_logits.append(end_logits)
 
-    print(all_start_logits)
-    print(all_end_logits)
 
     def post_processing_function(examples, features, predictions, stage="test"):
         # Post-processing: we match the start logits and end logits to answers in the original context.
