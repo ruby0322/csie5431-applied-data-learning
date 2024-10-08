@@ -57,7 +57,6 @@ def preprocess_function(examples, tokenizer, max_seq_length):
         max_length=max_seq_length,
         padding="max_length",  # Ensures all sequences are padded to the same length
         stride=128,
-        return_overflowing_tokens=True,
         return_offsets_mapping=True,
     )
 
