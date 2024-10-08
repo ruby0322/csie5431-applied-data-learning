@@ -49,7 +49,7 @@ def preprocess_function(examples, tokenizer, max_seq_length):
     # Clean questions by stripping leading whitespace
     questions = [q.lstrip() for q in examples["question"]]
 
-    # Tokenize questions and contexts with possible overflow handling
+    # Tokenize questions and contexts, ensuring truncation and padding
     tokenized_examples = tokenizer(
         questions,
         examples["context"],
@@ -57,8 +57,8 @@ def preprocess_function(examples, tokenizer, max_seq_length):
         max_length=max_seq_length,
         padding="max_length",  # Ensures all sequences are padded to the same length
         stride=128,
-        return_overflowing_tokens=False,
-        return_offsets_mapping=True,
+        return_overflowing_tokens=True,  # Handle cases where the context exceeds max_seq_length
+        return_offsets_mapping=True,  # Keep track of token offsets for later processing
     )
 
     # Map the overflowed tokens back to their original examples
@@ -70,7 +70,14 @@ def preprocess_function(examples, tokenizer, max_seq_length):
         sequence_ids = tokenized_examples.sequence_ids(i)
         context_index = 1 if tokenizer.padding_side == "right" else 0
 
-        sample_index = sample_mapping[i]  # Find the original example this token belongs to
+        # Ensure that all tokenized sequences are exactly of max length (for pyarrow compatibility)
+        if len(tokenized_examples["input_ids"][i]) != max_seq_length:
+            raise ValueError(
+                f"Expected sequence length {max_seq_length}, but got {len(tokenized_examples['input_ids'][i])}"
+            )
+
+        # Map this tokenized example to the corresponding original example
+        sample_index = sample_mapping[i]
         tokenized_examples["example_id"].append(examples["id"][sample_index])
 
         # Adjust offset mapping, keeping context positions and discarding others
