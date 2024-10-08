@@ -1,10 +1,12 @@
 import argparse
 import json
+
 import torch
-from transformers import AutoModelForMultipleChoice, AutoTokenizer, AutoConfig
+from datasets import load_dataset
 from torch.utils.data import DataLoader
 from tqdm.auto import tqdm
-from datasets import load_dataset
+from transformers import AutoConfig, AutoModelForMultipleChoice, AutoTokenizer
+
 
 def parse_args():
     parser = argparse.ArgumentParser(description="Perform inference on a multiple choice task using a fine-tuned model")
