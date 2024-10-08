@@ -58,6 +58,7 @@ def preprocess_function(examples, tokenizer, max_seq_length):
         return_offsets_mapping=True,
     )
     sample_mapping = tokenized_examples.pop("overflow_to_sample_mapping")
+    tokenized_examples["example_id"] = []
     for i in range(len(tokenized_examples["input_ids"])):
         sequence_ids = tokenized_examples.sequence_ids(i)
         context_index = 1 if tokenizer.padding_side == "right" else 0
