@@ -142,7 +142,7 @@ def main():
         tokenizer=tokenizer,
         test_dataset=test_dataset,
         batch_size=args.batch_size,
-        max_seq_length=args.max_seq_length
+        max_seq_length=min(args.max_seq_length, tokenizer.model_max_length)
     )
 
     # Save predictions
