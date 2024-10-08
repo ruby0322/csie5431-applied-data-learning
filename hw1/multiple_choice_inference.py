@@ -57,7 +57,8 @@ def main():
 
     # Perform inference
     for batch in tqdm(test_dataloader):
-        batch = {k: v.to(device) for k, v in batch.items()}
+        batch = {k: torch.tensor(v).to(device) if isinstance(v, list) else v.to(device) for k, v in batch.items()}
+
         
         with torch.no_grad():
             outputs = model(**batch)
