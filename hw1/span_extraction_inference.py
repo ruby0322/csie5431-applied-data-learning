@@ -163,7 +163,7 @@ def main():
             stride=128,
             return_overflowing_tokens=True,
             return_offsets_mapping=True,
-            padding="max_length" if args.pad_to_max_length else False,
+            padding="max_length",
         )
 
         # Since one example might give us several features if it has a long context, we need a map from a feature to
@@ -201,7 +201,7 @@ def main():
     data_collator = default_data_collator
     test_dataset_for_model = test_dataset.remove_columns(["example_id", "offset_mapping"])
     test_dataloader = DataLoader(
-        test_dataset_for_model, collate_fn=data_collator, batch_size=args.per_device_test_batch_size
+        test_dataset_for_model, collate_fn=data_collator, batch_size=4
     )
 
     def create_and_fill_np_array(start_or_end_logits, dataset, max_len):
