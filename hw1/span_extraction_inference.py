@@ -50,6 +50,7 @@ def preprocess_function(examples, tokenizer, max_seq_length):
     tokenized_examples = tokenizer(
         questions,
         examples["context"],
+        truncation="only_second" if tokenizer.padding_side == "right" else "only_first",
         max_length=max_seq_length,
         truncation="only_second",
         padding="max_length",
