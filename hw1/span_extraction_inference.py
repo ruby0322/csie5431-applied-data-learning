@@ -53,9 +53,9 @@ def preprocess_function(examples, tokenizer, max_seq_length):
     tokenized_examples = tokenizer(
         questions,
         examples["context"],
-        truncation=True,
+        truncation="only_second" if tokenizer.padding_side == "right" else "only_first",
         max_length=max_seq_length,
-        padding=max_seq_length,  # Ensures all sequences are padded to the same length
+        padding="max_length",  # Ensures all sequences are padded to the same length
         stride=128,
         return_overflowing_tokens=True,
         return_offsets_mapping=True,
