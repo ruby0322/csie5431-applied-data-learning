@@ -139,7 +139,7 @@ def main():
     pad_on_right = tokenizer.padding_side == "right"
     max_seq_length = min(args.max_seq_length, tokenizer.model_max_length)
 
-    column_names = test_dataset["train"].column_names
+    column_names = test_dataset.column_names
 
     question_column_name = "question" if "question" in column_names else column_names[0]
     context_column_name = "context" if "context" in column_names else column_names[1]
