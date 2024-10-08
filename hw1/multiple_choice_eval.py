@@ -76,7 +76,7 @@ def load_model_and_tokenizer(model_dir):
 
 def evaluate_model(model, tokenizer, validation_dataset, batch_size, max_seq_length):
     data_collator = default_data_collator
-    validation_dataset = validation_dataset.map(lambda x: preprocess_function(x, tokenizer, max_seq_length), batched=True)
+    validation_dataset = validation_dataset.map(lambda x: preprocess_function(x, tokenizer, max_seq_length), batched=True, remove_columns=validation_dataset.column_names)
     validation_dataloader = DataLoader(validation_dataset, collate_fn=data_collator, batch_size=batch_size)
 
     metric = evaluate.load("accuracy")

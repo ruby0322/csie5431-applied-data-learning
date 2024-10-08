@@ -690,7 +690,7 @@ def main():
                     token=args.hub_token,
                 )
             all_results = {f"eval_{k}": v for k, v in eval_metric.items()}
-            with open(os.path.join(args.output_dir, "all_results.json"), "w") as f:
+            with open(os.path.join(args.outplr_scheduler_typeut_dir, "all_results.json"), "w") as f:
                 json.dump(all_results, f)
 
 

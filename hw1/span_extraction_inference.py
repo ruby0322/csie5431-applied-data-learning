@@ -47,7 +47,7 @@ def parse_args():
 
 def preprocess_function(examples, tokenizer, max_seq_length):
     questions = [q.lstrip() for q in examples["question"]]
-    inputs = tokenizer(
+    tokenized_examples = tokenizer(
         questions,
         examples["context"],
         max_length=max_seq_length,
@@ -57,9 +57,19 @@ def preprocess_function(examples, tokenizer, max_seq_length):
         return_overflowing_tokens=True,
         return_offsets_mapping=True,
     )
-    sample_mapping = inputs.pop("overflow_to_sample_mapping")
-    inputs["example_id"] = [examples["id"][i] for i in sample_mapping]
-    return inputs
+    sample_mapping = tokenized_examples.pop("overflow_to_sample_mapping")
+    for i in range(len(tokenized_examples["input_ids"])):
+        sequence_ids = tokenized_examples.sequence_ids(i)
+        context_index = 1 if tokenizer.padding_side == "right" else 0
+
+        sample_index = sample_mapping[i]
+        tokenized_examples["example_id"].append(examples["id"][sample_index])
+
+        tokenized_examples["offset_mapping"][i] = [
+            (o if sequence_ids[k] == context_index else None)
+            for k, o in enumerate(tokenized_examples["offset_mapping"][i])
+        ]
+    return tokenized_examples
 
 def load_model_and_tokenizer(model_dir):
     model = AutoModelForQuestionAnswering.from_pretrained(model_dir)
