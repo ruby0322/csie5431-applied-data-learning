@@ -6,6 +6,7 @@ from itertools import chain
 import torch
 from accelerate import Accelerator
 from datasets import load_dataset
+from numpyencoder import NumpyEncoder
 from torch.utils.data import DataLoader
 from transformers import (AutoModelForMultipleChoice, AutoTokenizer,
                           default_data_collator)
@@ -113,7 +114,9 @@ def main():
     # Save predictions
     test_ids = test_dataset["id"]
     with open(args.output_file, "w") as f:
-        json.dump({"id": test_ids, "predictions": predictions}, f)
+        json.dump({"id": test_ids, "predictions": predictions}, f, indent=4, sort_keys=True,
+            separators=(', ', ': '), ensure_ascii=False,
+            cls=NumpyEncoder)
     
     print(f"Predictions saved to {args.output_file}")
 
