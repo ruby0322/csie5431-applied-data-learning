@@ -701,9 +701,9 @@ def main():
                 {"id": k, "prediction_text": v, "no_answer_probability": 0.0} for k, v in predictions.items()
             ]
         else:
-            formatted_predictions = [{"id": k, "prediction_text": v} for k, v in predictions.items()]
+            formatted_predictions = [{"id": str(k), "prediction_text": v} for k, v in predictions.items()]
 
-        references = [{"id": ex["id"], "answers": [{ "text": ex[answer_column_name]['text'][0], "answer_start": ex[answer_column_name]['answer_start'][0]}]} for ex in examples]
+        references = [{"id": str(ex["id"]), "answers": [{ "text": ex[answer_column_name]['text'][0], "answer_start": ex[answer_column_name]['answer_start'][0]}]} for ex in examples]
         return EvalPrediction(predictions=formatted_predictions, label_ids=references)
 
     metric = evaluate.load("squad_v2" if args.version_2_with_negative else "squad")
@@ -995,21 +995,12 @@ def main():
     if args.output_dir is not None:
         accelerator.wait_for_everyone()
         unwrapped_model = accelerator.unwrap_model(model)
-        unwrapped_model.save_pretrained(
-            args.output_dir, is_main_process=accelerator.is_main_process, save_function=accelerator.save
-        )
-        if accelerator.is_main_process:
-            tokenizer.save_pretrained(args.output_dir)
-            if args.push_to_hub:
-                api.upload_folder(
-                    commit_message="End of training",
-                    folder_path=args.output_dir,
-                    repo_id=repo_id,
-                    repo_type="model",
-                    token=args.hub_token,
-                )
-            logger.info(json.dumps(eval_metric, indent=4))
-            save_prefixed_metrics(eval_metric, args.output_dir)
+        # unwrapped_model.save_pretrained(
+        #     args.output_dir, is_main_process=accelerator.is_main_process, save_function=accelerator.save
+        # )
+        tokenizer.save_pretrained(args.output_dir)
+        logger.info(json.dumps(eval_metric, indent=4))
+        save_prefixed_metrics(eval_metric, args.output_dir)
 
 
 if __name__ == "__main__":
