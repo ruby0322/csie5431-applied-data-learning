@@ -160,7 +160,7 @@ def main():
             examples[context_column_name if pad_on_right else question_column_name],
             truncation="only_second" if pad_on_right else "only_first",
             max_length=max_seq_length,
-            stride=args.doc_stride,
+            stride=128,
             return_overflowing_tokens=True,
             return_offsets_mapping=True,
             padding="max_length" if args.pad_to_max_length else False,
