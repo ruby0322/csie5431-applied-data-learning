@@ -107,7 +107,7 @@ def postprocess_predictions(examples, features, start_logits, end_logits):
 
 def make_predictions(model, tokenizer, test_dataset, batch_size, max_seq_length):
     data_collator = default_data_collator
-    test_dataset = test_dataset.map(lambda x: preprocess_function(x, tokenizer, max_seq_length), batched=True, batch_size=1038)
+    test_dataset = test_dataset.map(lambda x: preprocess_function(x, tokenizer, max_seq_length), batched=True)
     test_dataloader = DataLoader(test_dataset, collate_fn=data_collator, batch_size=batch_size)
     
     all_start_logits = []
