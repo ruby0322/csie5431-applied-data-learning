@@ -7,6 +7,7 @@ from torch.utils.data import DataLoader
 from tqdm.auto import tqdm
 from transformers import (AutoModelForQuestionAnswering, AutoTokenizer,
                           default_data_collator)
+from utils_qa import postprocess_qa_predictions
 
 
 def parse_args():
@@ -134,12 +135,12 @@ def main():
 
     # Load test dataset
     extension = args.test_file.split(".")[-1]
-    test_dataset = load_dataset(extension, data_files={"test": args.test_file})["test"]
+    test_examples = load_dataset(extension, data_files={"test": args.test_file})["test"]
 
     pad_on_right = tokenizer.padding_side == "right"
     max_seq_length = min(args.max_seq_length, tokenizer.model_max_length)
 
-    column_names = test_dataset.column_names
+    column_names = test_examples.column_names
 
     question_column_name = "question" if "question" in column_names else column_names[0]
     context_column_name = "context" if "context" in column_names else column_names[1]
@@ -192,7 +193,7 @@ def main():
 
         return tokenized_examples
 
-    test_dataset = test_dataset.map(
+    test_dataset = test_examples.map(
         prepare_validation_features,
         batched=True,
         remove_columns=column_names,
@@ -243,6 +244,29 @@ def main():
     print(all_start_logits)
     print(all_end_logits)
 
+    def post_processing_function(examples, features, predictions, stage="test"):
+        # Post-processing: we match the start logits and end logits to answers in the original context.
+        predictions = postprocess_qa_predictions(
+            examples=examples,
+            features=features,
+            predictions=predictions,
+            output_dir=args.output_dir,
+            prefix=stage,
+        )
+        # Format the result to the format the metric expects.
+        formatted_predictions = [{"id": str(k), "prediction_text": v} for k, v in predictions.items()]
+        return formatted_predictions
+
+    max_len = max([x.shape[1] for x in all_start_logits])
+    start_logits_concat = create_and_fill_np_array(all_start_logits, test_dataset, max_len)
+    end_logits_concat = create_and_fill_np_array(all_end_logits, test_dataset, max_len)
+
+    # delete the list of numpy arrays
+    del all_start_logits
+    del all_end_logits
+
+    outputs_numpy = (start_logits_concat, end_logits_concat)
+    predictions = post_processing_function(test_examples, test_dataset, outputs_numpy)
     # # Make predictions
     # predictions = make_predictions(
     #     model=model,
@@ -253,10 +277,10 @@ def main():
     # )
 
     # Save predictions
-    # with open(args.output_file, "w") as f:
-    #     json.dump(predictions, f)
+    with open(args.output_file, "w") as f:
+        json.dump(predictions, f)
     
-    # print(f"Predictions saved to {args.output_file}")
+    print(f"Predictions saved to {args.output_file}")
 
 if __name__ == "__main__":
     main()
