@@ -995,9 +995,9 @@ def main():
     if args.output_dir is not None:
         accelerator.wait_for_everyone()
         unwrapped_model = accelerator.unwrap_model(model)
-        # unwrapped_model.save_pretrained(
-        #     args.output_dir, is_main_process=accelerator.is_main_process, save_function=accelerator.save
-        # )
+        unwrapped_model.save_pretrained(
+            args.output_dir, is_main_process=accelerator.is_main_process, save_function=accelerator.save
+        )
         tokenizer.save_pretrained(args.output_dir)
         logger.info(json.dumps(eval_metric, indent=4))
         save_prefixed_metrics(eval_metric, args.output_dir)
