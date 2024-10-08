@@ -231,7 +231,7 @@ def main():
 
     model.eval()
 
-    for step, batch in enumerate(predict_dataloader):
+    for step, batch in enumerate(test_dataloader):
         with torch.no_grad():
             outputs = model(**batch)
             start_logits = outputs.start_logits
