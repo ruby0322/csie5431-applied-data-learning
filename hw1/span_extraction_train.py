@@ -21,7 +21,7 @@ from torch.utils.data import DataLoader
 from tqdm.auto import tqdm
 from transformers import (CONFIG_MAPPING, MODEL_MAPPING, AutoConfig,
                           AutoModelForQuestionAnswering, AutoTokenizer,
-                          DataCollatorWithPadding, EvalPrediction,
+                          BertConfig, DataCollatorWithPadding, EvalPrediction,
                           SchedulerType, default_data_collator, get_scheduler)
 from transformers.utils import check_min_version, send_example_telemetry
 from transformers.utils.versions import require_version
@@ -401,7 +401,20 @@ def main():
     elif args.model_name_or_path:
         config = AutoConfig.from_pretrained(args.model_name_or_path, trust_remote_code=args.trust_remote_code)
     else:
-        config = CONFIG_MAPPING[args.model_type]()
+        config = BertConfig(
+            vocab_size=30522,        # Size of the vocabulary
+            hidden_size=256,         # Dimensionality of embeddings and hidden states
+            num_hidden_layers=4,     # Number of transformer encoder layers
+            num_attention_heads=4,   # Number of attention heads
+            intermediate_size=1024,  # Size of the feed-forward layer
+            hidden_act="gelu",       # Activation function
+            hidden_dropout_prob=0.1, # Dropout probability for fully connected layers
+            attention_probs_dropout_prob=0.1, # Dropout probability for attention layers
+            max_position_embeddings=512,      # Maximum sequence length
+            type_vocab_size=2,       # Vocabulary size for token type IDs
+            initializer_range=0.02,  # Standard deviation for weight initialization
+            layer_norm_eps=1e-12,    # Epsilon for layer normalization
+        )
         logger.warning("You are instantiating a new config instance from scratch.")
 
     if args.tokenizer_name:
@@ -903,7 +916,6 @@ def main():
                 "squad_v2" if args.version_2_with_negative else "squad": eval_metric,
                 "train_loss": total_loss.item() / len(train_dataloader),
                 "epoch": epoch,
-                "step": completed_steps,
             }, step=completed_steps)
 
     if args.with_tracking:
