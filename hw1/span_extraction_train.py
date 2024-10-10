@@ -898,16 +898,16 @@ def main():
         eval_metric = metric.compute(predictions=prediction.predictions, references=prediction.label_ids)
         logger.info(f"Evaluation metrics: {eval_metric}")
 
+        if args.with_tracking:
+            accelerator.log({
+                "squad_v2" if args.version_2_with_negative else "squad": eval_metric,
+                "train_loss": total_loss.item() / len(train_dataloader),
+                "epoch": epoch,
+                "step": completed_steps,
+            }, step=completed_steps)
+
     if args.with_tracking:
         accelerator.end_training()
-        log = {
-            "squad_v2" if args.version_2_with_negative else "squad": eval_metric,
-            "train_loss": total_loss.item() / len(train_dataloader),
-            "epoch": epoch,
-            "step": completed_steps,
-        }
-        logger.info(log)
-
     if args.output_dir is not None:
         accelerator.wait_for_everyone()
         unwrapped_model = accelerator.unwrap_model(model)
