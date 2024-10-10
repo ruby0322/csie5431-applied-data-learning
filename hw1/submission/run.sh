@@ -1,5 +1,3 @@
-#!/bin/bash
-
 # Check if all three parameters are provided
 if [ "$#" -ne 3 ]; then
     echo "Usage: $0 path_to_context.json path_to_test.json path_to_output_prediction.csv"
