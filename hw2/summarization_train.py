@@ -243,10 +243,8 @@ def main():
         last_checkpoint = get_last_checkpoint(training_args.output_dir)
         if last_checkpoint is None and len(os.listdir(training_args.output_dir)) > 0:
             raise ValueError(
-                f"Output directory ({
-                    training_args.output_dir}) already exists and is not empty. "
-                "Use --overwrite_output_dir to overcome."
-            )
+                f"Output directory ({training_args.output_dir}) already exists and is not empty. "
+                "Use --overwrite_output_dir to overcome.")
         elif last_checkpoint is not None and training_args.resume_from_checkpoint is None:
             logger.info(
                 f"Checkpoint detected, resuming training at {
@@ -562,20 +560,6 @@ def main():
                     training_args.output_dir, "generated_predictions.txt")
                 with open(output_prediction_file, "w") as writer:
                     writer.write("\n".join(predictions))
-
-    if training_args.push_to_hub:
-        kwargs = {"finetuned_from": model_args.model_name_or_path,
-                  "tags": "summarization"}
-        if data_args.dataset_name is not None:
-            kwargs["dataset_tags"] = data_args.dataset_name
-            if data_args.dataset_config_name is not None:
-                kwargs["dataset_args"] = data_args.dataset_config_name
-                kwargs["dataset"] = f"{data_args.dataset_name} {
-                    data_args.dataset_config_name}"
-            else:
-                kwargs["dataset"] = data_args.dataset_name
-
-        trainer.push_to_hub(**kwargs)
 
     return results
 
