@@ -19,6 +19,9 @@ from tw_rouge import get_rouge
 
 logger = logging.getLogger(__name__)
 
+nltk.download('punkt')
+nltk.download('wordnet')
+nltk.download('omw-1.4')
 try:
     nltk.data.find("tokenizers/punkt")
 except (LookupError, OSError):
