@@ -247,8 +247,7 @@ def main():
                 "Use --overwrite_output_dir to overcome.")
         elif last_checkpoint is not None and training_args.resume_from_checkpoint is None:
             logger.info(
-                f"Checkpoint detected, resuming training at {
-                    last_checkpoint}. To avoid this behavior, change "
+                f"Checkpoint detected, resuming training at {last_checkpoint}. To avoid this behavior, change "
                 "the `--output_dir` or add `--overwrite_output_dir` to train from scratch."
             )
 
@@ -263,10 +262,8 @@ def main():
 
     # Log on each process the small summary:
     logger.warning(
-        f"Process rank: {training_args.local_rank}, device: {
-            training_args.device}, n_gpu: {training_args.n_gpu}"
-        + f"distributed training: {bool(training_args.local_rank != -1)
-                                   }, 16-bits training: {training_args.fp16}"
+        f"Process rank: {training_args.local_rank}, device: {training_args.device}, n_gpu: {training_args.n_gpu}"
+        + f"distributed training: {bool(training_args.local_rank != -1)}, 16-bits training: {training_args.fp16}"
     )
     # Set the verbosity to info of the Transformers logger (on main process only):
     if is_main_process(training_args.local_rank):
@@ -344,8 +341,7 @@ def main():
         text_column = data_args.text_column
         if text_column not in column_names:
             raise ValueError(
-                f"--text_column' value '{data_args.text_column}' needs to be one of: {
-                    ', '.join(column_names)}"
+                f"--text_column' value '{data_args.text_column}' needs to be one of: {', '.join(column_names)}"
             )
     if data_args.summary_column is None:
         summary_column = dataset_columns[1] if dataset_columns is not None else column_names[1]
@@ -353,8 +349,7 @@ def main():
         summary_column = data_args.summary_column
         if summary_column not in column_names:
             raise ValueError(
-                f"--summary_column' value '{data_args.summary_column}' needs to be one of: {
-                    ', '.join(column_names)}"
+                f"--summary_column' value '{data_args.summary_column}' needs to be one of: {', '.join(column_names)}"
             )
 
     # Temporarily set max_target_length for training.
@@ -506,8 +501,7 @@ def main():
 
         metrics = train_result.metrics
         max_train_samples = (
-            data_args.max_train_samples if data_args.max_train_samples is not None else len(
-                train_dataset)
+            data_args.max_train_samples if data_args.max_train_samples is not None else len(train_dataset)
         )
         metrics["train_samples"] = min(max_train_samples, len(train_dataset))
 
@@ -523,8 +517,7 @@ def main():
         metrics = trainer.evaluate(
             max_length=data_args.val_max_target_length, num_beams=data_args.num_beams, metric_key_prefix="eval"
         )
-        max_eval_samples = data_args.max_eval_samples if data_args.max_eval_samples is not None else len(
-            eval_dataset)
+        max_eval_samples = data_args.max_eval_samples if data_args.max_eval_samples is not None else len(eval_dataset)
         metrics["eval_samples"] = min(max_eval_samples, len(eval_dataset))
 
         trainer.log_metrics("eval", metrics)
