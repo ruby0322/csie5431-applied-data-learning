@@ -6,6 +6,7 @@ from typing import Optional
 
 import nltk  # Here to have a nice missing dependency error message early on
 import numpy as np
+import pandas as pd
 import transformers
 from datasets import load_dataset
 from filelock import FileLock
@@ -110,6 +111,12 @@ class DataTrainingArguments:
         default=None,
         metadata={
             "help": "An optional input test data file to evaluate the metrics (rouge) on " "(a jsonlines or csv file)."
+        },
+    )
+    output_file: Optional[str] = field(
+        default=None,
+        metadata={
+            "help": "File path for predictions output."
         },
     )
     overwrite_cache: bool = field(
@@ -558,7 +565,16 @@ def main():
                 output_prediction_file = os.path.join(
                     training_args.output_dir, "generated_predictions.txt")
                 with open(output_prediction_file, "w") as writer:
-                    writer.write("\n".join(predictions))
+                    writer.write("\n".join(predictions))    
+                
+                ids = list(raw_datasets['test']['id'])
+                df = pd.DataFrame({})
+                df['id'] = ids
+                df['title'] = predictions
+                with open(data_args.output_file, "w") as f:
+                    f.write(df.to_json(orient='records', lines=True, force_ascii=False))
+                
+
 
     return results
 
