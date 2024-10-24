@@ -7,7 +7,7 @@ from typing import Optional
 import nltk  # Here to have a nice missing dependency error message early on
 import numpy as np
 import transformers
-from datasets import load_dataset, load_metric
+from datasets import load_dataset
 from filelock import FileLock
 from transformers import (AutoConfig, AutoModelForSeq2SeqLM, AutoTokenizer,
                           DataCollatorForSeq2Seq, HfArgumentParser,
@@ -275,7 +275,7 @@ def main():
 
     if data_args.dataset_name is not None:
         # Downloading and loading a dataset from the hub.
-        datasets = load_dataset(
+        raw_datasets = load_dataset(
             data_args.dataset_name, data_args.dataset_config_name, cache_dir=model_args.cache_dir)
     else:
         data_files = {}
@@ -289,7 +289,7 @@ def main():
             data_files["test"] = data_args.test_file
             extension = data_args.test_file.split(".")[-1]
         extension = 'json' if extension == 'jsonl' else extension
-        datasets = load_dataset(
+        raw_datasets = load_dataset(
             extension, data_files=data_files, cache_dir=model_args.cache_dir)
 
     config = AutoConfig.from_pretrained(
@@ -323,11 +323,11 @@ def main():
     prefix = data_args.source_prefix if data_args.source_prefix is not None else ""
 
     if training_args.do_train:
-        column_names = datasets["train"].column_names
+        column_names = raw_datasets["train"].column_names
     elif training_args.do_eval:
-        column_names = datasets["validation"].column_names
+        column_names = raw_datasets["validation"].column_names
     elif training_args.do_predict:
-        column_names = datasets["test"].column_names
+        column_names = raw_datasets["test"].column_names
     else:
         logger.info(
             "There is nothing to do. Please pass `do_train`, `do_eval` and/or `do_predict`.")
@@ -385,9 +385,9 @@ def main():
         return model_inputs
 
     if training_args.do_train:
-        if "train" not in datasets:
+        if "train" not in raw_datasets:
             raise ValueError("--do_train requires a train dataset")
-        train_dataset = datasets["train"]
+        train_dataset = raw_datasets["train"]
         if data_args.max_train_samples is not None:
             train_dataset = train_dataset.select(
                 range(data_args.max_train_samples))
@@ -401,9 +401,9 @@ def main():
 
     if training_args.do_eval:
         max_target_length = data_args.val_max_target_length
-        if "validation" not in datasets:
+        if "validation" not in raw_datasets:
             raise ValueError("--do_eval requires a validation dataset")
-        eval_dataset = datasets["validation"]
+        eval_dataset = raw_datasets["validation"]
         if data_args.max_eval_samples is not None:
             eval_dataset = eval_dataset.select(
                 range(data_args.max_eval_samples))
@@ -417,9 +417,9 @@ def main():
 
     if training_args.do_predict:
         max_target_length = data_args.val_max_target_length
-        if "test" not in datasets:
+        if "test" not in raw_datasets:
             raise ValueError("--do_predict requires a test dataset")
-        predict_dataset = datasets["test"]
+        predict_dataset = raw_datasets["test"]
         if data_args.max_predict_samples is not None:
             predict_dataset = predict_dataset.select(
                 range(data_args.max_predict_samples))
