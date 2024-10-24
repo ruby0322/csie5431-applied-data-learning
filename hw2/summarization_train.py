@@ -323,6 +323,7 @@ def main():
     if model.config.decoder_start_token_id is None:
         raise ValueError(
             "Make sure that `config.decoder_start_token_id` is correctly defined")
+    for param in model.parameters(): param.data = param.data.contiguous()
 
     prefix = data_args.source_prefix if data_args.source_prefix is not None else ""
 
