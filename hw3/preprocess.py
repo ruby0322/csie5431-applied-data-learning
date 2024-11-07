@@ -67,7 +67,7 @@ def preprocess(df):
 
 # Function to load, preprocess, and save data
 def preprocess_and_save(input_filename, output_filename):
-    df = pd.read_csv(input_filename)
+    df = pd.read_json(input_filename)
     preprocessed_df = preprocess(df)
     preprocessed_df.to_csv(output_filename, index=False)
     print(f"Data has been saved to {output_filename}")
@@ -75,8 +75,8 @@ def preprocess_and_save(input_filename, output_filename):
 # Command-line argument parsing
 if __name__ == "__main__":
     parser = argparse.ArgumentParser(description="Process and save text transformations.")
-    parser.add_argument("input_filename", type=str, help="Input CSV filename with data to process")
-    parser.add_argument("output_filename", type=str, help="Output CSV filename to save processed data")
+    parser.add_argument("input_filename", type=str, help="Input JSON filename with data to process")
+    parser.add_argument("output_filename", type=str, help="Output JSON filename to save processed data")
     
     args = parser.parse_args()
     
