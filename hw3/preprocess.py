@@ -47,7 +47,7 @@ def filter_and_remove_text(row):
         new_instruction = re.sub(r'。。', '。', new_instruction).strip()
         new_instruction = re.sub(r'[:：]$', '', new_instruction).strip()
         removed_text = (before_text + match.group() + after_text).strip()
-        task = -1
+        task = ''
         for k, v in REMOVED_TEXT_TASK_MAPPING.items():
             if k in removed_text:
                 task = v
@@ -60,7 +60,7 @@ def preprocess(df):
     preprocessed_df = pd.DataFrame(df)
     preprocessed_df['instruction'] = classification_df[0]
     preprocessed_df['task'] = classification_df[1]
-    preprocessed_df = preprocessed_df.dropna().reset_index(drop=True)
+    # preprocessed_df = preprocessed_df.dropna().reset_index(drop=True)
     preprocessed_df['instruction'] = preprocessed_df['instruction'] + preprocessed_df['task'] + '：'
     preprocessed_df = preprocessed_df.drop(columns=['task'])
     return preprocessed_df
