@@ -69,7 +69,7 @@ def preprocess(df):
 def preprocess_and_save(input_filename, output_filename):
     df = pd.read_json(input_filename)
     preprocessed_df = preprocess(df)
-    preprocessed_df.to_json(output_filename, index=False)
+    preprocessed_df.to_json(output_filename, index=False, orient="records")
     print(f"Data has been saved to {output_filename}")
 
 # Command-line argument parsing
