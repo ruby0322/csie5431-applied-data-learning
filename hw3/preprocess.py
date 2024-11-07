@@ -3,8 +3,8 @@ import re
 
 import pandas as pd
 
-TASK_TO_ACCIENT = '將白話文翻譯成文言文'
-TASK_TO_MODERN = '將文言文翻譯成繁體現代中文'
+TASK_TO_ACCIENT = '翻譯成文言文'
+TASK_TO_MODERN = '翻譯成白話文'
 
 INSTRUCTIONS = [
     '這句話在古代怎麼說',
@@ -61,7 +61,7 @@ def preprocess(df):
     preprocessed_df['instruction'] = classification_df[0]
     preprocessed_df['task'] = classification_df[1]
     preprocessed_df = preprocessed_df.dropna().reset_index(drop=True)
-    preprocessed_df['instruction'] = preprocessed_df['task'] + '：\n' + preprocessed_df['instruction']
+    preprocessed_df['instruction'] = preprocessed_df['instruction'] + preprocessed_df['task'] + '：'
     preprocessed_df = preprocessed_df.drop(columns=['task'])
     return preprocessed_df
 
