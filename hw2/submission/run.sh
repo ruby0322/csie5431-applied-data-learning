@@ -1,5 +1,5 @@
 
-CUDA_VISIBLE_DEVICES=0,1 python summarization_train.py \
+CUDA_VISIBLE_DEVICES=0,1 python summarization_inference.py \
     --model_name_or_path ./output/checkpoint-16284 \
     --do_predict \
     --test_file ${1} \
