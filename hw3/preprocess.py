@@ -34,7 +34,7 @@ pattern = '|'.join(INSTRUCTIONS)
 def filter_and_remove_text(row):
     instruction_text = row['instruction']
     if not re.search(pattern, instruction_text):
-        return None
+        return row
     
     match = re.search(pattern, instruction_text)
     if match:
