@@ -19,8 +19,8 @@ INSTRUCTIONS = [
 ]
 
 REMOVED_TEXT_TASK_MAPPING = {
-    '這句話在古代怎麼說': TASK_TO_ACCIENT,
-    '這句話在現代怎麼說': TASK_TO_MODERN,
+    '古代怎麼說': TASK_TO_ACCIENT,
+    '現代怎麼說': TASK_TO_MODERN,
     '翻譯成文言文': TASK_TO_ACCIENT,
     '翻譯成古文': TASK_TO_ACCIENT,
     '翻譯成現代文': TASK_TO_MODERN,
