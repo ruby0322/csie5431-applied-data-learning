@@ -37,7 +37,7 @@ echo "Adapter: $ADAPTER_PATH"
 echo "Input file: $INPUT_FILE"
 echo "Output file: $OUTPUT_FILE"
 
-python3 predict.py \
+python3 inference.py \
     --base_model_name "$BASE_MODEL_PATH" \
     --peft_model_path "$ADAPTER_PATH" \
     --input_file "$INPUT_FILE" \
