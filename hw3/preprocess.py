@@ -33,9 +33,6 @@ pattern = '|'.join(INSTRUCTIONS)
 # 篩選 rows 並移除指令周圍的文本
 def filter_and_remove_text(row):
     instruction_text = row['instruction']
-    if not re.search(pattern, instruction_text):
-        return row
-    
     match = re.search(pattern, instruction_text)
     if match:
         start, end = match.span()
@@ -53,6 +50,7 @@ def filter_and_remove_text(row):
                 task = v
                 break
         return pd.Series([new_instruction, task])
+    return pd.Series([instruction_text, ''])
 
 def preprocess(df):
     classification = df.apply(filter_and_remove_text, axis=1)
@@ -62,7 +60,7 @@ def preprocess(df):
     preprocessed_df['task'] = classification_df[1]
     # preprocessed_df = preprocessed_df.dropna().reset_index(drop=True)
     preprocessed_df['instruction'] = preprocessed_df['instruction'] + preprocessed_df['task'] + '：'
-    preprocessed_df = preprocessed_df.drop(columns=['task'])
+    # preprocessed_df = preprocessed_df.drop(columns=['task'])
     return preprocessed_df
 
 # Function to load, preprocess, and save data
