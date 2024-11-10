@@ -1,6 +1,7 @@
 import argparse
 import re
 
+import numpy as np
 import pandas as pd
 
 TASK_TO_ACCIENT = '翻譯成文言文'
@@ -59,7 +60,11 @@ def preprocess(df):
     preprocessed_df['instruction'] = classification_df[0]
     preprocessed_df['task'] = classification_df[1]
     # preprocessed_df = preprocessed_df.dropna().reset_index(drop=True)
-    preprocessed_df['instruction'] = preprocessed_df['instruction'] + preprocessed_df['task'] + '：'
+    preprocessed_df['instruction'] = np.where(
+        preprocessed_df['task'] != '',
+        preprocessed_df['instruction'] + preprocessed_df['task'] + '：',
+        preprocessed_df['instruction']
+    )
     # preprocessed_df = preprocessed_df.drop(columns=['task'])
     return preprocessed_df
 
